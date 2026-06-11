@@ -18,7 +18,7 @@ int main()
     GLFWwindow* window = glfwCreateWindow(
         800,
         600,
-        "3SCOP",
+        "SCOP",
         NULL,
         NULL
     );
