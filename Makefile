@@ -7,7 +7,8 @@ CXXFLAGS = -Wall -Wextra -Werror
 INCLUDES = -Iinclude
 
 SRC_CPP = src/main.cpp \
-		  src/Input.cpp
+		  src/Input.cpp \
+		  src/Shader.cpp
 SRC_C = src/glad.c
 
 OBJ_CPP = $(SRC_CPP:.cpp=.o)
