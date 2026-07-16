@@ -8,7 +8,9 @@ INCLUDES = -Iinclude
 
 SRC_CPP = src/main.cpp \
 		  src/Input.cpp \
-		  src/Shader.cpp
+		  src/Shader.cpp \
+		  src/Window.cpp
+
 SRC_C = src/glad.c
 
 OBJ_CPP = $(SRC_CPP:.cpp=.o)

@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include "Input.hpp"
 #include "Shader.hpp"
+#include "Window.hpp"
 
 #include <iostream>
 
@@ -14,32 +15,14 @@ int main()
     };
 
     Input input;
-    if (!glfwInit())
-    {
-        std::cerr << "Failed to initialize GLFW" << std::endl;
+
+    Window window(800, 600, "SCOP");
+
+    if (!window.isValid()){
         return 1;
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    GLFWwindow* window = glfwCreateWindow(
-        800,
-        600,
-        "SCOP",
-        NULL,
-        NULL
-    );
-
-    if (!window)
-    {
-        std::cerr << "Failed to create window" << std::endl;
-        glfwTerminate();
-        return 1;
-    }
-
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window.getNativeWindow());
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -69,9 +52,9 @@ int main()
         "shaders/basic.frag"
     };
 
-    while (!glfwWindowShouldClose(window))
+    while (!window.shouldClose())
     {
-        input.processInput(window);
+        input.processInput(window.getNativeWindow());
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -80,12 +63,8 @@ int main()
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+		window.update();
     }
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
 
     return 0;
 }
