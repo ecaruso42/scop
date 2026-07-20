@@ -1,11 +1,10 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "Input.hpp"
 #include "Shader.hpp"
 #include "Window.hpp"
 #include "Mesh.hpp"
+#include "Renderer.hpp"
 
-
+#include <vector>
 #include <iostream>
 
 int main()
@@ -13,18 +12,20 @@ int main()
     Input input;
 
     Window window(800, 600, "SCOP");
-
+	
     if (!window.isValid()){
-        return 1;
+		return 1;
     }
-
+	
     glfwMakeContextCurrent(window.getNativeWindow());
-
+	
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
+		std::cerr << "Failed to initialize GLAD" << std::endl;
         return 1;
     }
+	
+	Renderer renderer;
 
     std::vector<Vertex> vertices =
     {
@@ -50,7 +51,6 @@ int main()
         }
     };
 
-
     std::vector<unsigned int> indices =
     {
         0, 1, 2
@@ -67,12 +67,11 @@ int main()
     {
         input.processInput(window.getNativeWindow());
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+		renderer.clear();
 
 		shader.use();
 
-		triangle.draw();
+		renderer.draw(triangle);
 
 		window.update();
     }

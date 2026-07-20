@@ -6,11 +6,12 @@ CC = gcc
 CXXFLAGS = -Wall -Wextra -Werror
 INCLUDES = -Iinclude
 
-SRC_CPP = src/main.cpp \
-		  src/Input.cpp \
-		  src/Shader.cpp \
-		  src/Window.cpp \
-		  src/Mesh.cpp
+SRC_CPP = src/main.cpp		\
+		  src/Input.cpp		\
+		  src/Shader.cpp 	\
+		  src/Window.cpp	\
+		  src/Mesh.cpp		\
+		  src/Renderer.cpp
 
 SRC_C = src/glad.c
 
