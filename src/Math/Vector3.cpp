@@ -36,7 +36,8 @@ float Vector3::length() const{
 
 Vector3 Vector3::normalize() const{
 	float len = this->length();
-	if (len == 0.0f) return Vector3(0.0f, 0.0f, 0.0f);
+	if (len == 0.0f) 
+		return Vector3(0.0f, 0.0f, 0.0f);
 	return *this / len;
 }
 

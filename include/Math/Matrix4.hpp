@@ -26,5 +26,8 @@ class Matrix4 {
 		static Matrix4 rotationZ(const float angle);
 
 		static Matrix4 perspective(float fov, float aspect, float near, float far);
-		static Matrix4 lookAt(const Vector3 &eye, const Vector3 &center, const Vector3 &up);
+		static Matrix4 lookAt(const Vector3 &eye, const Vector3 &target, const Vector3 &up);
+
+		//in motori 3D seri questa funzione è una classe
+		Matrix4 transform(const Vector3 &position, const Vector3 &rotation, const Vector3 &scale) const;
 };

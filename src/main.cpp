@@ -27,9 +27,11 @@ int main()
         return 1;
     }
 
-	//inizio spazio tests
+	//inizio spazio test
 
-	//fine spazio tests
+	
+
+	//fine spazio test
 	
 	Renderer renderer;
 

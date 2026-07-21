@@ -119,10 +119,54 @@ Matrix4 Matrix4::rotationZ(const float angle){
     return result;
 }
 
-static Matrix4 perspective(float fov, float aspect, float near, float far){
+Matrix4 Matrix4::perspective(float fov, float aspect, float near, float far){
+	Matrix4 result;
 
+	float f = 1.0f / tan(fov / 2.0f);
+
+	result.at(0,0) = f / aspect;
+	result.at(1,1) = f;
+	result.at(2,2) = (far + near) / (near - far);
+	result.at(2,3) = (2 * far * near) / (near - far);
+	result.at(3,2) = -1;
+
+	return result;
 }
 
-static Matrix4 lookAt(const Vector3 &eye, const Vector3 &center, const Vector3 &up){
-	
+Matrix4 Matrix4::lookAt(const Vector3 &eye, const Vector3 &target, const Vector3 &up){
+	Matrix4 result = Matrix4::identity();
+
+	Vector3 forward = (target - eye).normalize();
+	Vector3 right = forward.cross(up).normalize();
+	Vector3 realUp = right.cross(forward);
+
+	result.at(0,0) = right.x;
+	result.at(0,1) = right.y;
+	result.at(0,2) = right.z;
+
+	result.at(1,0) = realUp.x;
+	result.at(1,1) = realUp.y;
+	result.at(1,2) = realUp.z;
+
+	result.at(2,0) = -forward.x;
+	result.at(2,1) = -forward.y;
+	result.at(2,2) = -forward.z;
+
+	result.at(0,3) = -right.dot(eye);
+	result.at(1,3) = -up.dot(eye);
+	result.at(2,3) = forward.dot(eye);
+
+	return result;
+}
+
+Matrix4 Matrix4::transform(const Vector3 &position, const Vector3 &rotation, const Vector3 &scale) const{
+	Matrix4 result = Matrix4::identity();
+
+	result = result * Matrix4::translation(position);
+	result = result * Matrix4::rotationX(rotation.x);
+	result = result * Matrix4::rotationY(rotation.y);
+	result = result * Matrix4::rotationZ(rotation.z);
+	result = result * Matrix4::scale(scale);
+
+	return result;
 }
