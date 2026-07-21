@@ -18,6 +18,10 @@ Matrix4 Matrix4::identity(){
 	return m;
 }
 
+const float* Matrix4::data() const{
+	return m;
+}
+
 float& Matrix4::at(int row, int col){
 	return m[col * 4 + row];
 }

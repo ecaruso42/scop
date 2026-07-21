@@ -1,8 +1,6 @@
 #include "Mesh.hpp"
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices){
-	this->_vertices = vertices;
-	this->_indices = indices;
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) : _vertices(vertices), _indices(indices){
 
 	glGenVertexArrays(1, &_VAO);
 	glGenBuffers(1, &_VBO);
@@ -37,4 +35,5 @@ Mesh::~Mesh(){
 void Mesh::draw()const{
 	glBindVertexArray(_VAO);
     glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 }

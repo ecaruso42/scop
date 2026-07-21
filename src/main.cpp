@@ -5,7 +5,7 @@
 #include "Renderer.hpp"
 #include "Math/Matrix4.hpp"
 #include "Math/Vector3.hpp"
-
+#include "ObjLoader.hpp"
 #include <vector>
 #include <iostream>
 
@@ -13,7 +13,7 @@ int main()
 {
     Input input;
 
-    Window window(800, 600, "SCOP");
+    Window window(1920, 1080, "SCOP");
 	
     if (!window.isValid()){
 		return 1;
@@ -35,41 +35,26 @@ int main()
 	
 	Renderer renderer;
 
-    std::vector<Vertex> vertices =
-    {
-        {
-            {-0.5f, -0.5f, 0.0f}, // position
-            {0.0f, 0.0f, 1.0f},  // normal
-            {1.0f, 0.0f, 0.0f},  // color
-            {0.0f, 0.0f}         // texture
-        },
+	ObjLoader loader("assets/models/42.obj");
 
-        {
-            {0.5f, -0.5f, 0.0f},
-            {0.0f, 0.0f, 1.0f},
-            {0.0f, 1.0f, 0.0f},
-            {1.0f, 0.0f}
-        },
+	Mesh object(loader.getVertices(), loader.getIndices());
 
-        {
-            {0.0f, 0.5f, 0.0f},
-            {0.0f, 0.0f, 1.0f},
-            {0.0f, 0.0f, 1.0f},
-            {0.5f, 1.0f}
-        }
-    };
+    Shader shader("shaders/basic.vert", "shaders/basic.frag");
 
-    std::vector<unsigned int> indices =
-    {
-        0, 1, 2
-    };
+	Matrix4 model = Matrix4::rotationY(-90.0f * M_PI / 180.0f);
 
-	Mesh triangle(vertices, indices);
+	Matrix4 view = Matrix4::lookAt(
+	    Vector3(0.0f, 0.0f, 3.0f),
+	    Vector3(0.0f, 0.0f, 0.0f),
+	    Vector3(0.0f, 1.0f, 0.0f)
+	);
 
-    Shader shader{
-        "shaders/basic.vert",
-        "shaders/basic.frag"
-    };
+	Matrix4 projection = Matrix4::perspective(
+	    45.0f * M_PI / 180.0f,
+	    800.0f / 600.0f,
+	    0.1f,
+	    100.0f
+	);
 
     while (!window.shouldClose())
     {
@@ -79,7 +64,11 @@ int main()
 
 		shader.use();
 
-		renderer.draw(triangle);
+		shader.setMatrix4("model", model);
+		shader.setMatrix4("view", view);
+		shader.setMatrix4("projection", projection);
+		
+		renderer.draw(object);
 
 		window.update();
     }

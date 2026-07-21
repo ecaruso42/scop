@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Math/Matrix4.hpp"
+
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -22,4 +24,6 @@ class Shader {
         ~Shader();
 
         void use() const;
+
+		void setMatrix4(const std::string& name, const Matrix4& matrix) const;
 };

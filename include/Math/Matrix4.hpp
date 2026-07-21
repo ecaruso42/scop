@@ -12,6 +12,8 @@ class Matrix4 {
 		Matrix4();
 		static Matrix4 identity();
 
+		const float* data() const;
+
 		float& at(int row, int col);
 		const float& at(int row, int col) const;
 

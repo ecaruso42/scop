@@ -14,7 +14,8 @@ SRC_CPP = src/main.cpp		\
 		  src/Renderer.cpp	\
 		  src/Math/Matrix4.cpp	\
 		  src/Math/Vector3.cpp	\
-		  src/Math/Vector2.cpp
+		  src/Math/Vector2.cpp	\
+		  src/ObjLoader.cpp	\
 
 SRC_C = src/glad.c
 
