@@ -11,7 +11,9 @@ SRC_CPP = src/main.cpp		\
 		  src/Shader.cpp 	\
 		  src/Window.cpp	\
 		  src/Mesh.cpp		\
-		  src/Renderer.cpp
+		  src/Renderer.cpp	\
+		  src/Math/Matrix4.cpp	\
+		  src/Math/Vector3.cpp
 
 SRC_C = src/glad.c
 

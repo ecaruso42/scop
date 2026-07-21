@@ -20,5 +20,5 @@ class Vector3{
 		Vector3 normalize() const;
 
 		Vector3 cross(const Vector3& other) const;
-		Vector3 dot(const Vector3& other) const;
+		float dot(const Vector3& other) const;
 };

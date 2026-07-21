@@ -3,6 +3,8 @@
 #include "Window.hpp"
 #include "Mesh.hpp"
 #include "Renderer.hpp"
+#include "Math/Matrix4.hpp"
+#include "Math/Vector3.hpp"
 
 #include <vector>
 #include <iostream>
@@ -24,6 +26,10 @@ int main()
 		std::cerr << "Failed to initialize GLAD" << std::endl;
         return 1;
     }
+
+	//inizio spazio tests
+
+	//fine spazio tests
 	
 	Renderer renderer;
 
