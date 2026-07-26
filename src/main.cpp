@@ -64,6 +64,8 @@ int main()
 
 		shader.use();
 
+		model = model * Matrix4::rotationY(-1.0f * M_PI / 180.0f);
+
 		shader.setMatrix4("model", model);
 		shader.setMatrix4("view", view);
 		shader.setMatrix4("projection", projection);

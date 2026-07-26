@@ -10,6 +10,7 @@ class ObjLoader{
     	std::vector<Vertex> _vertices;
     	std::vector<unsigned int> _indices;
 
+		void normalizeModel();
 
 	public:
     	ObjLoader(const std::string& path);
