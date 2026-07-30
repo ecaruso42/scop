@@ -13,8 +13,6 @@ ObjLoader::ObjLoader(const std::string& path)
 		return;
 	}
 
-	std::vector<Vector3> positions;
-
 	std::string line;
 
 	while(std::getline(file, line)){
@@ -25,35 +23,83 @@ ObjLoader::ObjLoader(const std::string& path)
 		ss >> type;
 
 		if(type == "v"){
-			float x, y, z;
-			ss >> x >> y >> z;
-			positions.push_back(Vector3(x, y, z));
+			parseVertex(ss);
+		}
+		else if(type == "vt"){
+			parseTexCoord(ss);
+		}
+		else if(type == "vn"){
+			parseNormal(ss);
 		}
 		else if(type == "f"){
-			std::vector<unsigned int> face;
-
-			unsigned int index;
-
-			while(ss >> index){
-				face.push_back(index - 1);
-			}
-			for(size_t i = 2; i < face.size(); i++){
-				_indices.push_back(face[0]);
-				_indices.push_back(face[i - 1]);
-				_indices.push_back(face[i]);
-			}
+			parseFace(ss);
 		}
 	}
-	for (size_t i = 0; i < positions.size(); i++){
-		Vertex vertex;
-		vertex.position = positions[i];
-		vertex.normal = Vector3(0, 0, 1);
-		vertex.color = Vector3(1, 1, 1);
-		vertex.texCoord = Vector2(0, 0);
-		_vertices.push_back(vertex);
+	
+	if (_positions.empty()){
+    	std::cerr << "OBJ contains no vertices\n";
+    	return;
 	}
 
+	if (_indices.empty()){
+    	std::cerr << "OBJ contains no faces\n";
+    	return;
+	}
+
+	buildVertices();
 	normalizeModel();
+}
+
+void ObjLoader::parseVertex(std::stringstream& ss)
+{
+    float x, y, z;
+    ss >> x >> y >> z;
+    _positions.push_back(Vector3(x, y, z));
+}
+
+void ObjLoader::parseTexCoord(std::stringstream& ss)
+{
+    float u, v;
+    ss >> u >> v;
+    _texCoords.push_back(Vector2(u, v));
+}
+
+void ObjLoader::parseNormal(std::stringstream& ss)
+{
+    float x, y, z;
+    ss >> x >> y >> z;
+    _normals.push_back(Vector3(x, y, z));
+}
+
+void ObjLoader::parseFace(std::stringstream& ss)
+{
+    std::vector<unsigned int> face;
+
+    unsigned int index;
+
+    while(ss >> index){
+        face.push_back(index - 1);
+    }
+    for(size_t i = 2; i < face.size(); i++){
+        _indices.push_back(face[0]);
+        _indices.push_back(face[i - 1]);
+        _indices.push_back(face[i]);
+    }
+}
+
+void ObjLoader::buildVertices()
+{
+    for (size_t i = 0; i < _positions.size(); i++)
+    {
+        Vertex vertex;
+
+        vertex.position = _positions[i];
+        vertex.texCoord = Vector2(0,0);
+        vertex.normal = Vector3(0,0,1);
+        vertex.color = Vector3(1,1,1);
+
+        _vertices.push_back(vertex);
+    }
 }
 
 void ObjLoader::normalizeModel()

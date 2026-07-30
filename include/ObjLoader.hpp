@@ -10,6 +10,16 @@ class ObjLoader{
     	std::vector<Vertex> _vertices;
     	std::vector<unsigned int> _indices;
 
+		std::vector<Vector3> _positions;
+		std::vector<Vector2> _texCoords;
+		std::vector<Vector3> _normals;
+
+		void parseVertex(std::stringstream& ss);
+		void parseTexCoord(std::stringstream& ss);
+		void parseNormal(std::stringstream& ss);
+		void parseFace(std::stringstream& ss);
+
+		void buildVertices();
 		void normalizeModel();
 
 	public:
