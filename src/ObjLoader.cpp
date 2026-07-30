@@ -46,7 +46,13 @@ ObjLoader::ObjLoader(const std::string& path)
     	return;
 	}
 
+std::cout << "Positions: " << _positions.size() << std::endl;
+std::cout << "Indices: " << _indices.size() << std::endl;
+
+	calculateNormals();
+	std::cout << "Normals calculated" << std::endl;
 	buildVertices();
+	std::cout << "Vertices built" << std::endl;
 	normalizeModel();
 }
 
@@ -99,6 +105,43 @@ void ObjLoader::parseFace(std::stringstream& ss)
     }
 }
 
+void ObjLoader::calculateNormals()
+{
+    _normals.resize(_positions.size(), Vector3(0,0,0));
+
+    for (size_t i = 0; i < _indices.size(); i += 3)
+    {
+        unsigned int i0 = _indices[i];
+        unsigned int i1 = _indices[i + 1];
+        unsigned int i2 = _indices[i + 2];
+
+        Vector3 v0 = _positions[i0];
+        Vector3 v1 = _positions[i1];
+        Vector3 v2 = _positions[i2];
+
+
+        Vector3 edge1 = v1 - v0;
+        Vector3 edge2 = v2 - v0;
+
+
+        Vector3 normal = edge1.cross(edge2);
+
+        normal.normalize();
+
+
+        _normals[i0] = _normals[i0] + normal;
+        _normals[i1] = _normals[i1] + normal;
+        _normals[i2] = _normals[i2] + normal;
+    }
+
+
+    // normalizzazione finale
+    for (size_t i = 0; i < _normals.size(); i++)
+    {
+        _normals[i].normalize();
+    }
+}
+
 void ObjLoader::buildVertices()
 {
     for (size_t i = 0; i < _positions.size(); i++)
@@ -107,8 +150,15 @@ void ObjLoader::buildVertices()
 
         vertex.position = _positions[i];
         vertex.texCoord = Vector2(0,0);
-        vertex.normal = Vector3(0,0,1);
-        vertex.color = Vector3(1,1,1);
+        vertex.normal = _normals[i];
+
+		float shade = (vertex.normal.z + 1.0f) * 0.5f;
+
+		vertex.color = Vector3(
+    		shade,
+    		shade,
+    		shade
+		);
 
         _vertices.push_back(vertex);
     }

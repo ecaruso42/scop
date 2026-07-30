@@ -1,5 +1,7 @@
 cose da rifinire:
-	aggiungere controllo errori piu robusto su objloader
+	aggiungere controllo errori piu robusto su objloader;
+
+	senza uno sfondo translate.z e scale sembrano uguali, in caso di aggiunta sfondo, aggiungere anche scale nei comandi
 
 Movement:
 

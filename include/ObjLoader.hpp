@@ -19,6 +19,7 @@ class ObjLoader{
 		void parseNormal(std::stringstream& ss);
 		void parseFace(std::stringstream& ss);
 
+		void calculateNormals();
 		void buildVertices();
 		void normalizeModel();
 
