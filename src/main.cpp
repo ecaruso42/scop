@@ -30,6 +30,8 @@ int main()
         return 1;
     }
 
+	glEnable(GL_DEPTH_TEST);
+
 	//inizio spazio test
 
 	
