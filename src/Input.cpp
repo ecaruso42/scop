@@ -1,20 +1,69 @@
 #include "Input.hpp"
 
-void Input::processInput(GLFWwindow *window)
+void Input::processInput(GLFWwindow *window, Transform& transform)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        std::cout << "W premuto\n";
+	float rotationSpeed = 2.0f * M_PI / 180.0f;
+    float movementSpeed = 0.05f;
+
+	//rotazione Y
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        transform.rotation.y += rotationSpeed;
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        transform.rotation.y -= rotationSpeed;
+
+    // rotazione X
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        transform.rotation.x += rotationSpeed;
+
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        transform.rotation.x -= rotationSpeed;
+
+	// rotazione Z
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        transform.rotation.z += rotationSpeed;
+
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        transform.rotation.z -= rotationSpeed;
+
+    // traslazione X
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        std::cout << "A premuto\n";
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        std::cout << "S premuto\n";
+        transform.position.x -= movementSpeed;
+
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        std::cout << "D premuto\n";
+        transform.position.x += movementSpeed;
+
+    // traslazione Y
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        transform.position.y += movementSpeed;
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        transform.position.y -= movementSpeed;
+
+	// traslazione Z
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+        transform.position.z += movementSpeed;
+
+    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+        transform.position.z -= movementSpeed;
+
+	// reset
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        transform.position = Vector3(0.0f, 0.0f, 0.0f);
+        transform.rotation = Vector3(0.0f, 0.0f, 0.0f);
+        transform.scale = Vector3(1.0f, 1.0f, 1.0f);
+    }
+
+	// close window
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+    	glfwSetWindowShouldClose(window, true);
+	}
 }
 
 Input::Input(){
 }
+
 Input::~Input(){
 }

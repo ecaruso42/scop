@@ -53,21 +53,33 @@ ObjLoader::ObjLoader(const std::string& path)
 void ObjLoader::parseVertex(std::stringstream& ss)
 {
     float x, y, z;
-    ss >> x >> y >> z;
+	if (!(ss >> x >> y >> z))
+	{
+    	std::cerr << "Malformed vertex\n";
+    	return;
+	}
     _positions.push_back(Vector3(x, y, z));
 }
 
 void ObjLoader::parseTexCoord(std::stringstream& ss)
 {
     float u, v;
-    ss >> u >> v;
+    if (!(ss >> u >> v))
+	{
+		std::cerr << "Malformed texture coordinate\n";
+		return;
+	}
     _texCoords.push_back(Vector2(u, v));
 }
 
 void ObjLoader::parseNormal(std::stringstream& ss)
 {
     float x, y, z;
-    ss >> x >> y >> z;
+    if (!(ss >> x >> y >> z))
+	{
+		std::cerr << "Malformed normal\n";
+		return;
+	}
     _normals.push_back(Vector3(x, y, z));
 }
 

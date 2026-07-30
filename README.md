@@ -1,2 +1,15 @@
 cose da rifinire:
 	aggiungere controllo errori piu robusto su objloader
+
+Movement:
+
+W/S = movement on y
+A/D = movement on x
+Q/E = movement on z
+
+KEY_UP/KEY_DOWN = rotation on x
+KEY_RIGHT/KEY_LEFT = rotation on y
+R/F = rotation on z
+
+SPACE = reset position
+

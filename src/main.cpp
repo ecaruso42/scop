@@ -6,6 +6,7 @@
 #include "Math/Matrix4.hpp"
 #include "Math/Vector3.hpp"
 #include "ObjLoader.hpp"
+#include "Transform.hpp"
 #include <vector>
 #include <iostream>
 
@@ -14,6 +15,8 @@ int main()
     Input input;
 
     Window window(1920, 1080, "SCOP");
+
+	Transform transform;
 	
     if (!window.isValid()){
 		return 1;
@@ -41,7 +44,7 @@ int main()
 
     Shader shader("shaders/basic.vert", "shaders/basic.frag");
 
-	Matrix4 model = Matrix4::rotationY(-90.0f * M_PI / 180.0f);
+	transform.rotation.y = 90.0f * M_PI / 180.0f;
 
 	Matrix4 view = Matrix4::lookAt(
 	    Vector3(0.0f, 0.0f, 3.0f),
@@ -58,15 +61,13 @@ int main()
 
     while (!window.shouldClose())
     {
-        input.processInput(window.getNativeWindow());
+        input.processInput(window.getNativeWindow(), transform);
 
 		renderer.clear();
 
 		shader.use();
 
-		model = model * Matrix4::rotationY(-1.0f * M_PI / 180.0f);
-
-		shader.setMatrix4("model", model);
+		shader.setMatrix4("model", transform.getMatrix());
 		shader.setMatrix4("view", view);
 		shader.setMatrix4("projection", projection);
 		
