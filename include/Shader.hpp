@@ -26,4 +26,6 @@ class Shader {
         void use() const;
 
 		void setMatrix4(const std::string& name, const Matrix4& matrix) const;
+
+		void setBool(const std::string& name, bool value) const;
 };

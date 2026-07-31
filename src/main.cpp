@@ -69,6 +69,8 @@ int main()
 
 		shader.use();
 
+		shader.setBool("useLighting", true);
+
 		shader.setMatrix4("model", transform.getMatrix());
 		shader.setMatrix4("view", view);
 		shader.setMatrix4("projection", projection);

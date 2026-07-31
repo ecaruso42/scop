@@ -76,3 +76,8 @@
 		unsigned int location = glGetUniformLocation(_ID, name.c_str());
 		glUniformMatrix4fv(location, 1, GL_FALSE, matrix.data());
 	}
+
+	void Shader::setBool(const std::string& name, bool value) const{
+		unsigned int location = glGetUniformLocation(_ID, name.c_str());
+		glUniform1i(location, value);
+	}
