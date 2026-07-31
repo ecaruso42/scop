@@ -14,10 +14,23 @@ class ObjLoader{
 		std::vector<Vector2> _texCoords;
 		std::vector<Vector3> _normals;
 
+		struct FaceVertex
+		{
+			int position;
+			int texCoord;
+			int normal;
+
+			FaceVertex() : position(-1), texCoord(-1), normal(-1){
+			}
+		};
+
+		std::vector<FaceVertex> _faceVertices;
+
 		void parseVertex(std::stringstream& ss);
 		void parseTexCoord(std::stringstream& ss);
 		void parseNormal(std::stringstream& ss);
 		void parseFace(std::stringstream& ss);
+		FaceVertex parseFaceVertex(const std::string &token);
 
 		void calculateNormals();
 		void buildVertices();

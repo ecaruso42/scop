@@ -41,7 +41,7 @@ ObjLoader::ObjLoader(const std::string& path)
     	return;
 	}
 
-	if (_indices.empty()){
+	if (_faceVertices.empty()){
     	std::cerr << "OBJ contains no faces\n";
     	return;
 	}
@@ -49,11 +49,26 @@ ObjLoader::ObjLoader(const std::string& path)
 std::cout << "Positions: " << _positions.size() << std::endl;
 std::cout << "Indices: " << _indices.size() << std::endl;
 
-	calculateNormals();
-	std::cout << "Normals calculated" << std::endl;
 	buildVertices();
 	std::cout << "Vertices built" << std::endl;
+	calculateNormals();
+	std::cout << "Normals calculated" << std::endl;
 	normalizeModel();
+
+	std::cout << "positions: "
+          << _positions.size() << std::endl;
+
+std::cout << "texCoords: "
+          << _texCoords.size() << std::endl;
+
+std::cout << "normals: "
+          << _normals.size() << std::endl;
+
+std::cout << "face vertices: "
+          << _faceVertices.size() << std::endl;
+
+std::cout << "vertices GPU: "
+          << _vertices.size() << std::endl;
 }
 
 void ObjLoader::parseVertex(std::stringstream& ss)
@@ -91,33 +106,59 @@ void ObjLoader::parseNormal(std::stringstream& ss)
 
 void ObjLoader::parseFace(std::stringstream& ss)
 {
-    std::vector<unsigned int> face;
+    std::vector<FaceVertex> face;
 
-    unsigned int index;
+    std::string token;
 
-    while(ss >> index){
-        face.push_back(index - 1);
+    while(ss >> token)
+    {
+        face.push_back(parseFaceVertex(token));
     }
-    for(size_t i = 2; i < face.size(); i++){
-        _indices.push_back(face[0]);
-        _indices.push_back(face[i - 1]);
-        _indices.push_back(face[i]);
+
+
+    for(size_t i = 2; i < face.size(); i++)
+    {
+        _faceVertices.push_back(face[0]);
+        _faceVertices.push_back(face[i - 1]);
+        _faceVertices.push_back(face[i]);
     }
+}
+
+ObjLoader::FaceVertex ObjLoader::parseFaceVertex(const std::string &token){
+	FaceVertex vertex;
+
+    std::stringstream ss(token);
+
+    std::string value;
+
+    if (std::getline(ss, value, '/'))
+    {
+        if (!value.empty())
+            vertex.position = std::atoi(value.c_str()) - 1;
+    }
+
+    if (std::getline(ss, value, '/'))
+    {
+        if (!value.empty())
+            vertex.texCoord = std::atoi(value.c_str()) - 1;
+    }
+
+    if (std::getline(ss, value, '/'))
+    {
+        if (!value.empty())
+            vertex.normal = std::atoi(value.c_str()) - 1;
+    }
+
+    return vertex;
 }
 
 void ObjLoader::calculateNormals()
 {
-    _normals.resize(_positions.size(), Vector3(0,0,0));
-
-    for (size_t i = 0; i < _indices.size(); i += 3)
+    for(size_t i = 0; i < _vertices.size(); i += 3)
     {
-        unsigned int i0 = _indices[i];
-        unsigned int i1 = _indices[i + 1];
-        unsigned int i2 = _indices[i + 2];
-
-        Vector3 v0 = _positions[i0];
-        Vector3 v1 = _positions[i1];
-        Vector3 v2 = _positions[i2];
+        Vector3 v0 = _vertices[i].position;
+        Vector3 v1 = _vertices[i+1].position;
+        Vector3 v2 = _vertices[i+2].position;
 
 
         Vector3 edge1 = v1 - v0;
@@ -129,38 +170,56 @@ void ObjLoader::calculateNormals()
         normal.normalize();
 
 
-        _normals[i0] = _normals[i0] + normal;
-        _normals[i1] = _normals[i1] + normal;
-        _normals[i2] = _normals[i2] + normal;
-    }
-
-
-    // normalizzazione finale
-    for (size_t i = 0; i < _normals.size(); i++)
-    {
-        _normals[i].normalize();
+        _vertices[i].normal = normal;
+        _vertices[i+1].normal = normal;
+        _vertices[i+2].normal = normal;
     }
 }
 
 void ObjLoader::buildVertices()
 {
-    for (size_t i = 0; i < _positions.size(); i++)
+    for(size_t i = 0; i < _faceVertices.size(); i++)
     {
+        FaceVertex fv = _faceVertices[i];
+
         Vertex vertex;
 
-        vertex.position = _positions[i];
-        vertex.texCoord = Vector2(0,0);
-        vertex.normal = _normals[i];
+		vertex.position = _positions[fv.position];
 
-		float shade = (vertex.normal.z + 1.0f) * 0.5f;
+        if(fv.position >= 0 &&
+           fv.position < (int)_positions.size())
+        {
+            vertex.position = _positions[fv.position];
+        }
 
-		vertex.color = Vector3(
-    		shade,
-    		shade,
-    		shade
-		);
+
+        if(fv.texCoord >= 0 &&
+           fv.texCoord < (int)_texCoords.size())
+        {
+            vertex.texCoord = _texCoords[fv.texCoord];
+        }
+        else
+        {
+            vertex.texCoord = Vector2(0,0);
+        }
+
+
+        if(fv.normal >= 0 &&
+           fv.normal < (int)_normals.size())
+        {
+            vertex.normal = _normals[fv.normal];
+        }
+        else
+        {
+            vertex.normal = Vector3(0,0,0);
+        }
+
+
+        vertex.color = Vector3(1,1,1);
+
 
         _vertices.push_back(vertex);
+        _indices.push_back(i);
     }
 }
 

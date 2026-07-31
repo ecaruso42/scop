@@ -40,7 +40,7 @@ int main()
 	
 	Renderer renderer;
 
-	ObjLoader loader("assets/models/42.obj");
+	ObjLoader loader("assets/models/teapot.obj");
 
 	Mesh object(loader.getVertices(), loader.getIndices());
 
