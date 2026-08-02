@@ -13,5 +13,7 @@ KEY_UP/KEY_DOWN = rotation on x
 KEY_RIGHT/KEY_LEFT = rotation on y
 R/F = rotation on z
 
+T = toggle texture
+
 SPACE = reset position
 
