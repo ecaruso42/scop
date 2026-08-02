@@ -200,7 +200,9 @@ void ObjLoader::buildVertices()
         }
         else
         {
-            vertex.texCoord = Vector2(0,0);
+            vertex.texCoord = Vector2(
+    			vertex.position.x + 0.5f,
+    			vertex.position.y + 0.5f);
         }
 
 

@@ -7,6 +7,7 @@
 #include "Math/Vector3.hpp"
 #include "ObjLoader.hpp"
 #include "Transform.hpp"
+#include "Texture.hpp"
 #include <vector>
 #include <iostream>
 
@@ -40,11 +41,13 @@ int main()
 	
 	Renderer renderer;
 
-	ObjLoader loader("assets/models/teapot.obj");
-
+	ObjLoader loader("assets/models/42.obj");
+	
 	Mesh object(loader.getVertices(), loader.getIndices());
-
+	
     Shader shader("shaders/basic.vert", "shaders/basic.frag");
+	
+	Texture texture("assets/textures/test.ppm");
 
 	transform.rotation.y = 90.0f * M_PI / 180.0f;
 
@@ -61,8 +64,16 @@ int main()
 	    100.0f
 	);
 
+	bool textureEnabled = false;
+	float textureBlend = 0.0f;
+	float lastTime = glfwGetTime();
+
     while (!window.shouldClose())
     {
+		float currentTime = glfwGetTime();
+		float deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
+
         input.processInput(window.getNativeWindow(), transform);
 
 		renderer.clear();
@@ -74,7 +85,31 @@ int main()
 		shader.setMatrix4("model", transform.getMatrix());
 		shader.setMatrix4("view", view);
 		shader.setMatrix4("projection", projection);
-		
+
+		texture.bind();
+
+		if (input.isKeyPressed(window.getNativeWindow(), GLFW_KEY_T))
+		{
+   			textureEnabled = !textureEnabled;
+		}
+
+		float speed = 0.5f;
+
+	if (textureEnabled)
+	{
+    	textureBlend += speed * deltaTime;
+
+    	if (textureBlend > 1.0f)
+    	    textureBlend = 1.0f;
+	}
+	else
+	{
+    	textureBlend -= speed * deltaTime;
+
+    	if (textureBlend < 0.0f)
+    	    textureBlend = 0.0f;
+	}
+		shader.setFloat("textureBlend", textureBlend);
 		renderer.draw(object);
 
 		window.update();

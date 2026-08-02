@@ -16,7 +16,8 @@ SRC_CPP = src/main.cpp		\
 		  src/Math/Vector3.cpp	\
 		  src/Math/Vector2.cpp	\
 		  src/ObjLoader.cpp	\
-		  src/Transform.cpp
+		  src/Transform.cpp \
+		  src/Texture.cpp
 
 SRC_C = src/glad.c
 

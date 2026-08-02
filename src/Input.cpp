@@ -62,7 +62,19 @@ void Input::processInput(GLFWwindow *window, Transform& transform)
 	}
 }
 
+bool Input::isKeyPressed(GLFWwindow* window, int key)
+{
+    bool current = glfwGetKey(window, key) == GLFW_PRESS;
+    bool previous = _previousKeys[key];
+
+    _previousKeys[key] = current;
+
+    return current && !previous;
+}
+
 Input::Input(){
+	for (int i = 0; i <= GLFW_KEY_LAST; i++)
+        _previousKeys[i] = false;
 }
 
 Input::~Input(){
