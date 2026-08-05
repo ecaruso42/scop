@@ -52,10 +52,12 @@ ObjLoader::ObjLoader(const std::string& path) : _valid(false)
 	}
 
 	calculateNormals();
-
+	
 	if(!normalizeModel()){
 		return;
 	}
+	
+	generateMissingUVs();
 
 	_valid = true;
 }
@@ -198,9 +200,7 @@ bool ObjLoader::buildVertices()
         }
         else
         {
-            vertex.texCoord = Vector2(
-    			vertex.position.x + 0.5f,
-    			vertex.position.y + 0.5f);
+            vertex.texCoord = Vector2(0.0f, 0.0f);
         }
 
 
@@ -216,18 +216,47 @@ bool ObjLoader::buildVertices()
 
 		size_t faceIndex = i / 3;
 
-        float r = static_cast<float>((faceIndex * 37) % 100) / 100.0f;
-        float g = static_cast<float>((faceIndex * 53) % 100) / 100.0f;
-        float b = static_cast<float>((faceIndex * 71) % 100) / 100.0f;
+        float gray = 0.20f + static_cast<float>((faceIndex * 37) % 56) / 100.0f;
 
-
-        vertex.color = Vector3(r, g, b);
+		vertex.color = Vector3(gray, gray, gray);
 
 
         _vertices.push_back(vertex);
         _indices.push_back(i);
     }
 	return true;
+}
+
+Vector2 ObjLoader::calculateBoxUV(
+    const Vector3& position,
+    const Vector3& normal)
+{
+    float x = normal.x;
+    float y = normal.y;
+    float z = normal.z;
+
+    if (std::fabs(x) >= std::fabs(y) &&
+        std::fabs(x) >= std::fabs(z))
+    {
+        return Vector2(
+            position.z + 0.5f,
+            position.y + 0.5f
+        );
+    }
+
+    if (std::fabs(y) >= std::fabs(x) &&
+        std::fabs(y) >= std::fabs(z))
+    {
+        return Vector2(
+            position.x + 0.5f,
+            position.z + 0.5f
+        );
+    }
+
+    return Vector2(
+        position.x + 0.5f,
+        position.y + 0.5f
+    );
 }
 
 bool ObjLoader::normalizeModel()
@@ -276,6 +305,26 @@ bool ObjLoader::normalizeModel()
     	_vertices[i].position = (_vertices[i].position - center) / maxSize;
 	}
 	return true;
+}
+
+void ObjLoader::generateMissingUVs()
+{
+    for (size_t i = 0; i < _vertices.size(); i += 3)
+    {
+        Vector3 normal = _vertices[i].normal;
+
+        for (size_t j = 0; j < 3; j++)
+        {
+            if (_faceVertices[i + j].texCoord < 0)
+            {
+                _vertices[i + j].texCoord =
+                    calculateBoxUV(
+                        _vertices[i + j].position,
+                        normal
+                    );
+            }
+        }
+    }
 }
 
 const std::vector<Vertex>& ObjLoader::getVertices() const{

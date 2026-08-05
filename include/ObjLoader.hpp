@@ -33,9 +33,11 @@ class ObjLoader{
 		void parseNormal(std::stringstream& ss);
 		void parseFace(std::stringstream& ss);
 		FaceVertex parseFaceVertex(const std::string &token);
+		void generateMissingUVs();
 
 		void calculateNormals();
 		bool buildVertices();
+		Vector2 calculateBoxUV(const Vector3& position, const Vector3& normal);
 		bool normalizeModel();
 
 	public:
