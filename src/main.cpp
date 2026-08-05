@@ -33,6 +33,10 @@ int main(int argc, char** argv)
     Window window(1920, 1080, "SCOP");
 
 	Transform transform;
+	Transform logoTransform;
+
+	logoTransform.position = Vector3(-1.45f, 0.95f, 0.0f);
+	logoTransform.scale = Vector3(0.25f, 0.25f, 0.25f);
 	
     if (!window.isValid()){
 		return 1;
@@ -51,6 +55,16 @@ int main(int argc, char** argv)
 	Renderer renderer;
 
 	ObjLoader loader(argv[1]);
+
+	ObjLoader logoLoader("assets/models/42.obj");
+
+	if (!logoLoader.isValid())
+	{
+	    std::cerr << "Failed to load logo OBJ file" << std::endl;
+	    return 1;
+	}
+
+	Mesh logo(logoLoader.getVertices(), logoLoader.getIndices());
 
 	if (!loader.isValid()){
 		std::cerr << "Failed to load OBJ file" << std::endl;
@@ -93,6 +107,8 @@ int main(int argc, char** argv)
 		float deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 
+		logoTransform.rotation.y += deltaTime;
+
         input.processInput(window.getNativeWindow(), transform);
 
 		renderer.clear();
@@ -130,6 +146,12 @@ int main(int argc, char** argv)
 	}
 		shader.setFloat("textureBlend", textureBlend);
 		renderer.draw(object);
+
+		shader.setMatrix4("model", logoTransform.getMatrix());
+		shader.setBool("useLighting", true);
+		shader.setFloat("textureBlend", 0.0f);
+
+		renderer.draw(logo);
 
 		window.update();
     }
