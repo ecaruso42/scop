@@ -12,15 +12,18 @@ The user can interact with the model in real time(keys listed below) by rotating
 
 Instruction:
 
-Makefile have all basic commands for compiling like make, make all, make clean/fclean and make re
+(OPTIONAL) The subject requires a one line command that install all dependencies but for me it's pretty invasive so first test without it
+sudo apt update && sudo apt install -y build-essential libglfw3-dev libgl1-mesa-dev && make
+
+Makefile have all basic commands for compiling like make, make all, make clean/fclean and make re. Added make deps to check dependencies.
 
 The program has to be executed with the command line ./scop path_to_obj path_to_texture.ppm
 
 Below are listed all of the possible commands.
 
-W/S = movement on y
-A/D = movement on x
-Q/E = movement on z
+W/S = translate on y
+A/D = translate on x
+Q/E = translate on z (scaling not implemented because it's visually the same as translation on z)
 
 KEY_UP/KEY_DOWN = rotation on x
 KEY_RIGHT/KEY_LEFT = rotation on y
