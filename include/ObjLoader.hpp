@@ -7,6 +7,8 @@
 
 class ObjLoader{
 	private:
+		bool _valid;
+
     	std::vector<Vertex> _vertices;
     	std::vector<unsigned int> _indices;
 
@@ -33,12 +35,13 @@ class ObjLoader{
 		FaceVertex parseFaceVertex(const std::string &token);
 
 		void calculateNormals();
-		void buildVertices();
-		void normalizeModel();
+		bool buildVertices();
+		bool normalizeModel();
 
 	public:
     	ObjLoader(const std::string& path);
 
     	const std::vector<Vertex>& getVertices() const;
     	const std::vector<unsigned int>& getIndices() const;
+		bool isValid() const;
 };

@@ -8,9 +8,14 @@
 #include <string>
 
 Texture::Texture(const std::string& path)
-    : _ID(0), _width(0), _height(0)
+    : _ID(0), _width(0), _height(0), _valid(false)
 {
-    loadPPM(path);
+	if (!loadPPM(path))
+	{
+		std::cerr << "Failed to load texture: " << path << std::endl;
+		return;
+	}
+	_valid = true;
 }
 
 Texture::~Texture()
@@ -25,7 +30,7 @@ void Texture::bind() const
     glBindTexture(GL_TEXTURE_2D, _ID);
 }
 
-void Texture::loadPPM(const std::string& path)
+bool Texture::loadPPM(const std::string& path)
 {
     std::ifstream file(path.c_str(), std::ios::binary);
 
@@ -33,7 +38,7 @@ void Texture::loadPPM(const std::string& path)
     {
         std::cerr << "Failed to open texture: "
                   << path << std::endl;
-        return;
+        return false;
     }
 
     std::string format;
@@ -43,7 +48,7 @@ void Texture::loadPPM(const std::string& path)
     {
         std::cerr << "Unsupported PPM format: "
                   << format << std::endl;
-        return;
+        return false;
     }
 
     file >> _width >> _height;
@@ -54,7 +59,7 @@ void Texture::loadPPM(const std::string& path)
     if (_width <= 0 || _height <= 0 || maxValue != 255)
     {
         std::cerr << "Invalid PPM texture" << std::endl;
-        return;
+        return false;
     }
 
     file.get();
@@ -72,7 +77,7 @@ void Texture::loadPPM(const std::string& path)
     {
         std::cerr << "Failed to read texture data"
                   << std::endl;
-        return;
+        return false;
     }
 
     glGenTextures(1, &_ID);
@@ -115,4 +120,11 @@ void Texture::loadPPM(const std::string& path)
     );
 
     glBindTexture(GL_TEXTURE_2D, 0);
+
+	return true;
+}
+
+bool Texture::isValid() const
+{
+	return _valid;
 }

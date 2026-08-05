@@ -3,8 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cstdlib>
 
-ObjLoader::ObjLoader(const std::string& path)
+ObjLoader::ObjLoader(const std::string& path) : _valid(false)
 {
     std::ifstream file(path);
 
@@ -46,29 +47,17 @@ ObjLoader::ObjLoader(const std::string& path)
     	return;
 	}
 
-std::cout << "Positions: " << _positions.size() << std::endl;
-std::cout << "Indices: " << _indices.size() << std::endl;
+	if(!buildVertices()){
+		return;
+	}
 
-	buildVertices();
-	std::cout << "Vertices built" << std::endl;
 	calculateNormals();
-	std::cout << "Normals calculated" << std::endl;
-	normalizeModel();
 
-	std::cout << "positions: "
-          << _positions.size() << std::endl;
+	if(!normalizeModel()){
+		return;
+	}
 
-std::cout << "texCoords: "
-          << _texCoords.size() << std::endl;
-
-std::cout << "normals: "
-          << _normals.size() << std::endl;
-
-std::cout << "face vertices: "
-          << _faceVertices.size() << std::endl;
-
-std::cout << "vertices GPU: "
-          << _vertices.size() << std::endl;
+	_valid = true;
 }
 
 void ObjLoader::parseVertex(std::stringstream& ss)
@@ -114,6 +103,12 @@ void ObjLoader::parseFace(std::stringstream& ss)
     {
         face.push_back(parseFaceVertex(token));
     }
+
+	if (face.size() < 3)
+	{
+	    std::cerr << "Malformed face: less than 3 vertices" << std::endl;
+	    return;
+	}
 
 
     for(size_t i = 2; i < face.size(); i++)
@@ -176,7 +171,7 @@ void ObjLoader::calculateNormals()
     }
 }
 
-void ObjLoader::buildVertices()
+bool ObjLoader::buildVertices()
 {
     for(size_t i = 0; i < _faceVertices.size(); i++)
     {
@@ -184,13 +179,16 @@ void ObjLoader::buildVertices()
 
         Vertex vertex;
 
-		vertex.position = _positions[fv.position];
-
         if(fv.position >= 0 &&
            fv.position < (int)_positions.size())
         {
             vertex.position = _positions[fv.position];
         }
+		else
+		{
+			std::cerr << "Invalid vertex index in face" << std::endl;
+			return false;
+		}
 
 
         if(fv.texCoord >= 0 &&
@@ -216,19 +214,26 @@ void ObjLoader::buildVertices()
             vertex.normal = Vector3(0,0,0);
         }
 
+		size_t faceIndex = i / 3;
 
-        vertex.color = Vector3(1,1,1);
+        float r = static_cast<float>((faceIndex * 37) % 100) / 100.0f;
+        float g = static_cast<float>((faceIndex * 53) % 100) / 100.0f;
+        float b = static_cast<float>((faceIndex * 71) % 100) / 100.0f;
+
+
+        vertex.color = Vector3(r, g, b);
 
 
         _vertices.push_back(vertex);
         _indices.push_back(i);
     }
+	return true;
 }
 
-void ObjLoader::normalizeModel()
+bool ObjLoader::normalizeModel()
 {
     if (_vertices.empty())
-        return;
+        return false;
 
     Vector3 min = _vertices[0].position;
     Vector3 max = _vertices[0].position;
@@ -260,10 +265,17 @@ void ObjLoader::normalizeModel()
 	if (sizeZ > maxSize)
 	    maxSize = sizeZ;
 
+	if (maxSize <= 0.0f)
+	{
+    	std::cerr << "Invalid model dimensions\n";
+    	return false;
+	}
+
 	for (size_t i = 0; i < _vertices.size(); i++)
 	{
     	_vertices[i].position = (_vertices[i].position - center) / maxSize;
 	}
+	return true;
 }
 
 const std::vector<Vertex>& ObjLoader::getVertices() const{
@@ -272,4 +284,8 @@ const std::vector<Vertex>& ObjLoader::getVertices() const{
 
 const std::vector<unsigned int>& ObjLoader::getIndices() const{
 	return _indices;
+}
+
+bool ObjLoader::isValid() const{
+	return _valid;
 }

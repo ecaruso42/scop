@@ -11,8 +11,23 @@
 #include <vector>
 #include <iostream>
 
-int main()
+int main(int argc, char** argv)
 {
+	if (argc != 3)
+	{
+		std::cerr << "Usage: " << argv[0] << " <path_to_obj_file> <path_to_texture.ppm>" << std::endl;
+		return 1;
+	}
+
+	bool is42 = false;
+
+	std::string path = argv[1];
+
+	if (path.find("42.obj") != std::string::npos)
+	{
+	    is42 = true;
+	}
+
     Input input;
 
     Window window(1920, 1080, "SCOP");
@@ -32,22 +47,26 @@ int main()
     }
 
 	glEnable(GL_DEPTH_TEST);
-
-	//inizio spazio test
-
-	
-
-	//fine spazio test
 	
 	Renderer renderer;
 
-	ObjLoader loader("assets/models/42.obj");
+	ObjLoader loader(argv[1]);
+
+	if (!loader.isValid()){
+		std::cerr << "Failed to load OBJ file" << std::endl;
+    	return 1;
+	}
 	
 	Mesh object(loader.getVertices(), loader.getIndices());
 	
     Shader shader("shaders/basic.vert", "shaders/basic.frag");
 	
-	Texture texture("assets/textures/test.ppm");
+	Texture texture(argv[2]);
+
+	if(!texture.isValid()){
+		std::cerr << "Failed to load texture" << std::endl;
+		return 1;
+	}
 
 	transform.rotation.y = 90.0f * M_PI / 180.0f;
 
@@ -80,7 +99,7 @@ int main()
 
 		shader.use();
 
-		shader.setBool("useLighting", true);
+		shader.setBool("useLighting", is42);
 
 		shader.setMatrix4("model", transform.getMatrix());
 		shader.setMatrix4("view", view);
