@@ -107,6 +107,8 @@ bool Texture::loadPPM(const std::string& path)
         GL_REPEAT
     );
 
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
